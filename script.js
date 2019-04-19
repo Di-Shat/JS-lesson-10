@@ -58,18 +58,37 @@ getKey = () => {
 }
 На случай, если два сообщения поступят одновременно, функция getKey добавляет "[2]" к значению ключа ( иначе значения ключей двух сообщений будут совпадать )*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+let messages = [
+    "backspace",
+    "enter",
+    "shift",
+    "control",
+    "delete",
+    "space",
+    "subtract"
+]
 
+var log = {}
 
+var sendMessage = ( message, callback ) => 
+    setTimeout (
+        () => callback ( message ),
+        Math.random () * 7000
+    )
 
+var handler = message => {
+    Object.assign(log,
+        {[getKey()] : message}
+    )
+}
+messages.forEach (
+    message => sendMessage ( message, handler )
+)
 
-
-
-
-
-
-
-
-
+getKey = () => {
+    var key = new Date().toLocaleString().split(", ")[1]
+    return log [ key ] ? key + "[2]" : key
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*Task-2
 Допилите код конструктора User, дополнив его акцессорами приватного свойства presence так, чтобы после выполнения скрипта:
@@ -93,31 +112,23 @@ console.info ( user.presence )
 
 "Ivan is present"*/
 /////////////////////////////////////////////////////////////////////
+function User ( name ) {
+    this.name = name
+    var presence = false
+    Object.defineProperty ( this, "presence", {
+        get: () =>
+            presence ? 
+                `${this.name} is present` : 
+                    `${this.name} is absent`,
+        set: newVal =>
+            presence = newVal + "***" 
+    })
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+let user = new User ( "Ivan" )
+console.info ( user.presence )
+user.presence = '+'
+console.info ( user.presence )
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /*Task-3
 Объявить функцию-конструктор User
